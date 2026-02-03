@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
-    <!-- مكتبات Firebase (الإصدار 8 المتوافق والمستقر) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <!-- مكتبات Firebase (الإصدار 9 المتوافق - Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
@@ -259,6 +259,28 @@
                     </div>
                 </div>
                 <div id="list" class="space-y-3 pb-20"></div>
+            </div>
+
+            <!-- تبويب: النسخ الاحتياطي -->
+            <div id="tab-backup" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">النسخ الاحتياطي والاستعادة 💾</h2>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center">
+                    <p class="text-gray-500 mb-8 max-w-lg mx-auto">
+                        لأن الموقع يعمل بدون قاعدة بيانات سحابية، يتم حفظ البيانات في متصفحك.
+                        <br><strong class="text-red-500">مهم جداً:</strong> قم بتحميل ملف النسخة الاحتياطية كل فترة لحفظ بياناتك من الضياع، واستخدم هذا الملف لتحديث بيانات الموقع على GitHub.
+                    </p>
+                    <div class="flex flex-col md:flex-row justify-center gap-6">
+                        <button onclick="downloadBackup()" class="flex items-center justify-center gap-3 bg-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-purple-700 shadow-lg transition transform hover:-translate-y-1">
+                            <span>تحميل نسخة احتياطية (JSON) ⬇️</span>
+                        </button>
+                        <div class="relative overflow-hidden">
+                            <button class="flex items-center justify-center gap-3 bg-gray-800 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-900 shadow-lg transition w-full">
+                                <span>استعادة نسخة سابقة ⬆️</span>
+                            </button>
+                            <input type="file" id="backup-file" onchange="restoreBackup(this)" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </main>
