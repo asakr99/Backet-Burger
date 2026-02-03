@@ -1,203 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl" class="scroll-smooth">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="قائمة طعام وعروض مطعم SamaBrand - تصفح المنيو واطلب الآن">
-    <title id="page-title">SamaBrand | منيو وعروض المطعم</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = { darkMode: 'class' }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="bg-gray-50 text-gray-900 dark:bg-zinc-950 dark:text-white transition-colors duration-300 overflow-x-hidden">
-
-    <header class="fixed w-full z-[100] glass">
-        <nav class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-            <div id="nav-logo-text" class="text-xl md:text-2xl font-black text-[#423064] dark:text-white transition-all">SamaBrand</div>
-            <div id="main-nav-links" class="hidden md:flex space-x-6 space-x-reverse font-bold text-sm"></div>
-            <div class="flex items-center gap-3">
-                <a href="cart.html" class="relative p-2.5 bg-purple-100 dark:bg-zinc-800 rounded-full hover:bg-purple-200 transition-colors" aria-label="سلة المشتريات">
-                    🛒 <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow-sm">0</span>
-                </a>
-                <button onclick="toggleLang()" id="lang-btn" class="px-4 py-1.5 border-2 border-purple-600 dark:border-purple-400 dark:text-white rounded-full text-xs font-bold hover:bg-purple-600 hover:text-white transition-colors">English</button>
-                <button onclick="toggleTheme()" id="theme-btn" class="p-2 bg-gray-100 dark:bg-zinc-800 rounded-full hover:bg-gray-200 dark:hover:bg-zinc-700 transition shadow-sm text-purple-600 dark:text-yellow-400" aria-label="تغيير المظهر"></button>
-                <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-2xl dark:text-white" aria-label="القائمة">☰</button>
-            </div>
-        </nav>
-        <div id="mobile-menu" class="hidden flex-col bg-white dark:bg-zinc-900 w-full p-6 space-y-4 border-t dark:border-zinc-800 md:hidden shadow-xl">
-            <div id="mobile-nav-links" class="flex flex-col space-y-4 font-bold"></div>
-            <hr class="dark:border-zinc-800">
-        </div>
-    </header>
-
-    <section id="hero" class="relative min-h-screen flex items-center justify-center text-center px-4 pb-20">
-        <img id="hero-bg" src="" class="absolute inset-0 w-full h-full object-cover transition-transform duration-[10s]" alt="Background">
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-[2px]"></div>
-        
-        <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
-            <svg class="relative block w-[calc(100%+1.3px)] h-[60px] md:h-[120px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-               <!-- SVG Shape -->
-            </svg>
-        </div>
-
-        <div class="relative z-10 w-full max-w-4xl pt-20 flex flex-col items-center">
-            <img id="main-logo" src="" class="h-32 md:h-56 mx-auto mb-8 drop-shadow-2xl hidden" alt="Logo">
-            <h1 id="hero-title" class="text-4xl md:text-7xl font-black text-white mb-6 leading-tight drop-shadow-lg">SamaBrand</h1>
-            <p id="hero-desc" class="text-base md:text-2xl text-gray-200 mb-10 max-w-2xl mx-auto font-medium">تجربة طعام استثنائية وعروض مميزة</p>
-            <a id="wa-link-hero" href="#contact" class="group relative px-8 py-4 bg-purple-600 text-white rounded-full font-bold text-lg shadow-[0_10px_20px_rgba(147,51,234,0.3)] hover:shadow-[0_15px_30px_rgba(147,51,234,0.5)] hover:bg-purple-700 transition-all overflow-hidden inline-flex items-center gap-2">
-                <span data-i18n="cta-btn">اطلب الآن</span>
-                <span class="group-hover:translate-x-1 transition-transform">←</span>
-            </a>
-            <!-- زر التطبيق (الهيرو) -->
-            <a id="app-btn-hero" href="#" target="_blank" class="hidden mt-6 px-8 py-3 bg-white/10 backdrop-blur-md text-white border-2 border-white/30 rounded-full font-bold text-lg hover:bg-white hover:text-purple-600 transition-all items-center gap-2">
-                <span class="app-btn-text">حمل التطبيق</span>
-                <span>⬇️</span>
-            </a>
-        </div>
-    </section>
-
-    <!-- مكان شريط السوشيال العلوي -->
-    <div id="social-section-top" class="container mx-auto px-4 -mt-8 relative z-20 flex justify-center empty:hidden"></div>
-
-    <!-- منطقة المحتوى الديناميكي -->
-    <main id="dynamic-content" class="bg-gray-50 dark:bg-zinc-900 min-h-[60vh] pb-32">
-        <div class="container mx-auto px-4 py-16">
-            <!-- Skeleton Title -->
-            <div class="flex items-center justify-center mb-10 gap-4 animate-pulse">
-                <div class="h-1 w-12 bg-gray-300 dark:bg-zinc-700 rounded-full"></div>
-                <div class="h-8 w-40 bg-gray-300 dark:bg-zinc-700 rounded-full"></div>
-                <div class="h-1 w-12 bg-gray-300 dark:bg-zinc-700 rounded-full"></div>
-            </div>
-            <!-- Skeleton Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-white dark:bg-zinc-800 rounded-[2rem] overflow-hidden shadow border border-gray-100 dark:border-zinc-700 flex flex-col h-full animate-pulse">
-                    <div class="h-64 bg-gray-200 dark:bg-zinc-700 w-full"></div>
-                    <div class="p-6 flex flex-col flex-grow space-y-4">
-                        <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-3/4"></div>
-                        <div class="h-3 bg-gray-200 dark:bg-zinc-700 rounded w-full"></div>
-                        <div class="mt-auto flex justify-between items-end pt-4 border-t dark:border-zinc-700/50 border-gray-100">
-                            <div class="h-8 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                            <div class="h-12 w-12 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white dark:bg-zinc-800 rounded-[2rem] overflow-hidden shadow border border-gray-100 dark:border-zinc-700 flex flex-col h-full animate-pulse">
-                    <div class="h-64 bg-gray-200 dark:bg-zinc-700 w-full"></div>
-                    <div class="p-6 flex flex-col flex-grow space-y-4">
-                        <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-1/2"></div>
-                        <div class="h-3 bg-gray-200 dark:bg-zinc-700 rounded w-full"></div>
-                        <div class="mt-auto flex justify-between items-end pt-4 border-t dark:border-zinc-700/50 border-gray-100">
-                            <div class="h-8 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                            <div class="h-12 w-12 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="hidden lg:flex bg-white dark:bg-zinc-800 rounded-[2rem] overflow-hidden shadow border border-gray-100 dark:border-zinc-700 flex-col h-full animate-pulse">
-                    <div class="h-64 bg-gray-200 dark:bg-zinc-700 w-full"></div>
-                    <div class="p-6 flex flex-col flex-grow space-y-4">
-                        <div class="h-4 bg-gray-200 dark:bg-zinc-700 rounded w-2/3"></div>
-                        <div class="h-3 bg-gray-200 dark:bg-zinc-700 rounded w-full"></div>
-                        <div class="mt-auto flex justify-between items-end pt-4 border-t dark:border-zinc-700/50 border-gray-100">
-                            <div class="h-8 w-20 bg-gray-200 dark:bg-zinc-700 rounded"></div>
-                            <div class="h-12 w-12 rounded-full bg-gray-200 dark:bg-zinc-700"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- مكان شريط السوشيال السفلي -->
-    <div id="social-section-bottom" class="container mx-auto px-4 py-10 flex justify-center empty:hidden"></div>
-
-    <footer id="contact" class="bg-zinc-900 text-white pt-16 pb-10 border-t dark:border-zinc-800 relative text-sm">
-        <div class="container mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <!-- القسم 1: اللوجو والوصف -->
-                <div class="text-center md:text-start flex flex-col items-center md:items-start">
-                    <h2 id="footer-logo" class="text-3xl font-black mb-4 text-purple-400">SamaBrand</h2>
-                    <p id="footer-desc" class="text-gray-400 leading-relaxed text-base">مطعم متميز يقدم أشهى الأطباق...</p>
-                    <!-- زر التطبيق (الفوتر) -->
-                    <a id="app-btn-footer" href="#" target="_blank" class="hidden mt-6 inline-flex px-6 py-2 bg-purple-600 text-white rounded-xl font-bold text-sm hover:bg-purple-700 transition items-center gap-2">
-                        <span>📱</span>
-                        <span class="app-btn-text">حمل التطبيق</span>
-                    </a>
-                </div>
-                <!-- القسم 2: الخريطة -->
-                <div class="rounded-2xl overflow-hidden h-48 border border-gray-700 shadow-lg">
-                    <iframe id="footer-map" class="w-full h-full" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                </div>
-                <!-- القسم 3: تواصل معنا -->
-                <div class="flex flex-col items-center text-center">
-                    <h3 data-i18n="footer-contact-title" class="text-xl font-bold mb-6 text-white border-b border-gray-700 pb-2 inline-block">تواصل معنا</h3>
-                    <div id="footer-contacts" class="space-y-4 flex flex-col items-center w-full"></div>
-                </div>
-            </div>
-            <div class="border-t border-gray-800 mt-12 pt-8 text-center text-gray-500">
-                <p data-i18n="footer-desc">جميع الحقوق محفوظة © 2026</p>
-            </div>
-        </div>
-    </footer>
-
-    <button onclick="scrollToTop()" id="scrollTopBtn" class="fixed bottom-6 right-6 w-14 h-14 bg-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center font-bold text-2xl z-40 transition-all duration-300 opacity-0 pointer-events-none hover:bg-purple-700 hover:-translate-y-1">
-        <span class="animate-pulse">↑</span>
-        <span class="absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-20 animate-ping"></span>
-    </button>
-
-    <!-- حاوية الإشعارات -->
-    <div id="toast-container" class="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 flex flex-col items-center pointer-events-none w-full max-w-sm px-4"></div>
-
-    <!-- نافذة خيارات الإضافة (Modal) -->
-    <div id="addon-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4">
-        <!-- الخلفية المعتمة -->
-        <div onclick="closeAddonModal()" class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"></div>
-        <!-- محتوى النافذة -->
-        <div class="relative bg-white dark:bg-zinc-900 w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <!-- صورة وعنوان الوجبة -->
-            <div class="relative h-48 shrink-0">
-                <img id="modal-img" src="" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                <button onclick="closeAddonModal()" class="absolute top-4 right-4 bg-black/50 text-white w-10 h-10 rounded-full flex items-center justify-center font-bold hover:bg-red-600 transition">✕</button>
-                <div class="absolute bottom-4 right-4 text-white">
-                    <h3 id="modal-title" class="text-2xl font-black"></h3>
-                    <p id="modal-desc" class="text-sm text-gray-300 line-clamp-1"></p>
-                </div>
-            </div>
-            <!-- منطقة الخيارات (تمرير) -->
-            <div id="modal-content" class="p-6 overflow-y-auto space-y-6">
-                <!-- سيتم ملؤه بالجافاسكربت -->
-            </div>
-            <!-- الفوتر: السعر وزر الإضافة -->
-            <div class="p-4 border-t dark:border-zinc-800 bg-gray-50 dark:bg-zinc-950 shrink-0">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center gap-4 bg-white dark:bg-zinc-800 p-1 rounded-xl border dark:border-zinc-700">
-                        <button onclick="updateModalQty(-1)" class="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-zinc-700 rounded-lg font-bold text-lg hover:bg-gray-200">-</button>
-                        <span id="modal-qty" class="font-bold text-xl w-8 text-center dark:text-white">1</span>
-                        <button onclick="updateModalQty(1)" class="w-10 h-10 flex items-center justify-center bg-gray-100 dark:bg-zinc-700 rounded-lg font-bold text-lg hover:bg-gray-200">+</button>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs text-gray-400 block">الإجمالي</span>
-                        <span id="modal-total" class="text-2xl font-black text-purple-600 dark:text-purple-400">0</span>
-                    </div>
-                </div>
-                <button onclick="confirmAddToCart()" class="w-full py-4 bg-[#423064] text-white rounded-xl font-bold text-lg hover:bg-purple-700 transition shadow-lg flex justify-center items-center gap-2">
-                    <span>إضافة للسلة</span>
-                    <span>🛒</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- مكتبات Firebase الأساسية -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-
-    <!-- ملفات الموقع -->
-    <script src="data.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
