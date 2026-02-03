@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamaBrand | لوحة التحكم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
+        .input-field { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0; outline: none; transition: 0.3s; background: #fff; }
+        .input-field:focus { border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1); }
+        .sidebar-btn { text-align: right; width: 100%; padding: 12px; border-radius: 12px; transition: 0.2s; font-weight: bold; color: #64748b; margin-bottom: 5px; }
+        .sidebar-btn:hover { background: #f1f5f9; color: #423064; }
+        .sidebar-btn.active { background: #423064; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- شاشة تسجيل الدخول -->
+    <div id="login" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-10 rounded-[2rem] shadow-2xl w-full max-w-md text-center">
+            <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">🔐</div>
+            <h2 class="text-2xl font-black mb-2 text-[#423064]">لوحة الإدارة</h2>
+            <p class="text-gray-400 text-sm mb-8">قم بتسجيل الدخول للتحكم في المنيو</p>
+            <input type="password" id="p" placeholder="كلمة المرور" class="input-field mb-4 text-center">
+            <button onclick="go()" class="w-full py-4 bg-[#423064] text-white rounded-xl font-bold hover:bg-purple-800 transition shadow-lg">دخول</button>
+        </div>
+    </div>
+
+    <!-- لوحة التحكم الرئيسية -->
+    <div id="panel" class="hidden min-h-screen flex flex-col md:flex-row">
+        
+        <!-- القائمة الجانبية -->
+        <aside class="bg-white w-full md:w-64 border-l p-6 flex flex-col justify-between shadow-sm z-10">
+            <div>
+                <div class="text-2xl font-black text-[#423064] mb-8 px-2">لوحة التحكم ⚙️</div>
+                <nav>
+                    <button onclick="switchTab('home')" id="btn-home" class="sidebar-btn active">📊 نظرة عامة</button>
+                    <button onclick="switchTab('settings')" id="btn-settings" class="sidebar-btn">🎨 إعدادات الموقع</button>
+                    <button onclick="switchTab('addons')" id="btn-addons" class="sidebar-btn">🧩 الإضافات</button>
+                    <button onclick="switchTab('social')" id="btn-social" class="sidebar-btn">✨ السوشيال ميديا</button>
+                    <button onclick="switchTab('sections')" id="btn-sections" class="sidebar-btn">📁 الأقسام</button>
+                    <button onclick="switchTab('meals')" id="btn-meals" class="sidebar-btn">🍔 الوجبات</button>
+                    <button onclick="switchTab('backup')" id="btn-backup" class="sidebar-btn text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 mt-4">💾 نسخ احتياطي</button>
+                </nav>
+            </div>
+            <div class="mt-8 border-t pt-4">
+                <a href="index.html" target="_blank" class="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-purple-600 transition">
+                    <span>معاينة الموقع ↗</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- المحتوى -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto max-h-screen">
+
+            <!-- تبويب: نظرة عامة -->
+            <div id="tab-home" class="tab-content space-y-6">
+                <header class="flex justify-between items-center mb-8">
+                    <h1 class="text-3xl font-black text-gray-800">مرحباً بك 👋</h1>
+                </header>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-purple-100">
+                        <div class="text-gray-400 font-bold mb-2">عدد الوجبات</div>
+                        <div class="text-4xl font-black text-purple-600" id="stat-meals">0</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-blue-100">
+                        <div class="text-gray-400 font-bold mb-2">عدد الأقسام</div>
+                        <div class="text-4xl font-black text-blue-600" id="stat-sections">0</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-green-100 cursor-pointer hover:bg-green-50 transition" onclick="switchTab('backup')">
+                        <div class="text-gray-400 font-bold mb-2">حالة البيانات</div>
+                        <div class="text-lg font-bold text-green-600">محفوظة محلياً ✅</div>
+                        <div class="text-xs text-gray-400 mt-1">اضغط هنا لعمل نسخة احتياطية</div>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-6 rounded-2xl border border-yellow-100">
+                    <h3 class="font-bold text-yellow-700 mb-2">تغيير كلمة المرور</h3>
+                    <div class="flex gap-4">
+                        <input id="new_pass" type="text" placeholder="كلمة المرور الجديدة" class="input-field max-w-xs">
+                        <button onclick="changePassword()" class="bg-yellow-500 text-white px-6 rounded-xl font-bold hover:bg-yellow-600">حفظ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تبويب: الإعدادات -->
+            <div id="tab-settings" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">إعدادات الهوية والواجهة</h2>
+                <div class="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-gray-100">
+                    <!-- الهوية الأساسية -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-400">اسم المطعم (عربي)</label>
+                            <input id="t_ar" type="text" class="input-field">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-400">اسم المطعم (English)</label>
+                            <input id="t_en" type="text" class="input-field" dir="ltr">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-400">رقم الواتساب (بدون +)</label>
+                            <input id="w" type="text" class="input-field" placeholder="966500000000">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-400">رابط الشعار (Logo URL)</label>
+                            <input id="l" type="text" class="input-field">
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-gray-400">رابط خلفية الهيرو (Hero Image)</label>
+                            <input id="h" type="text" class="input-field">
+                        </div>
+                    </div>
+                    
+                    <!-- نصوص الهيرو -->
+                    <div class="border-t my-6 pt-6">
+                        <h3 class="font-bold text-purple-600 mb-4">نصوص الواجهة (Hero)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input id="hero_t_ar" placeholder="العنوان الرئيسي (عربي)" class="input-field">
+                            <input id="hero_t_en" placeholder="Hero Title (EN)" class="input-field" dir="ltr">
+                            <textarea id="hero_d_ar" placeholder="الوصف (عربي)" class="input-field" rows="2"></textarea>
+                            <textarea id="hero_d_en" placeholder="Description (EN)" class="input-field" rows="2" dir="ltr"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- الفوتر -->
+                    <div class="border-t my-6 pt-6">
+                        <h3 class="font-bold text-blue-600 mb-4">الفوتر (تذييل الصفحة)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">عنوان الفوتر (عربي)</label>
+                                <input id="footer_title_ar" placeholder="مثال: عن المطعم" class="input-field">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">Footer Title (EN)</label>
+                                <input id="footer_title_en" placeholder="Ex: About Us" class="input-field" dir="ltr">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">وصف الفوتر (عربي)</label>
+                                <textarea id="footer_desc_ar" placeholder="نبذة مختصرة..." class="input-field" rows="3"></textarea>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">Footer Description (EN)</label>
+                                <textarea id="footer_desc_en" placeholder="Short bio..." class="input-field" rows="3" dir="ltr"></textarea>
+                            </div>
+                        </div>
+
+                        <h3 class="font-bold text-blue-600 mb-4">الخريطة والتواصل</h3>
+                        <div class="mb-4">
+                            <input id="map_url" placeholder="رابط الخريطة (Embed URL)" class="input-field font-mono text-xs">
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-xl border border-gray-200">
+                            <div class="flex gap-2 mb-2">
+                                <select id="contact_type" class="p-2 rounded-lg border bg-white"><option value="phone">هاتف</option><option value="email">إيميل</option></select>
+                                <input id="contact_val" placeholder="القيمة" class="input-field">
+                                <button onclick="addContact()" class="bg-green-600 text-white px-4 rounded-lg font-bold hover:bg-green-700">+</button>
+                            </div>
+                            <div id="contact-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+
+                    <!-- قسم زر التطبيق -->
+                    <div class="border-t my-6 pt-6">
+                        <h3 class="font-bold text-green-600 mb-4">زر تحميل التطبيق 📱</h3>
+                        <div class="flex gap-6 mb-4 bg-green-50 p-4 rounded-xl border border-green-100">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="show_app_hero" class="w-5 h-5 accent-green-600">
+                                <label for="show_app_hero" class="font-bold text-sm select-none">إظهار في الهيرو (Hero)</label>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" id="show_app_footer" class="w-5 h-5 accent-green-600">
+                                <label for="show_app_footer" class="font-bold text-sm select-none">إظهار في الفوتر (Footer)</label>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">نص الزر (عربي)</label>
+                                <input id="app_txt_ar" placeholder="حمل التطبيق" class="input-field">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">Button Text (English)</label>
+                                <input id="app_txt_en" placeholder="Download App" class="input-field" dir="ltr">
+                            </div>
+                            <div class="space-y-1 md:col-span-2">
+                                <label class="text-xs font-bold text-gray-400">رابط التحميل (Link)</label>
+                                <input id="app_link" placeholder="https://..." class="input-field" dir="ltr">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- قسم حقوق الملكية -->
+                    <div class="border-t my-6 pt-6">
+                        <h3 class="font-bold text-blue-600 mb-4">حقوق الملكية (Copyright) ©</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">النص (عربي)</label>
+                                <input id="copy_ar" placeholder="جميع الحقوق محفوظة © 2026" class="input-field">
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-gray-400">Text (English)</label>
+                                <input id="copy_en" placeholder="All Rights Reserved © 2026" class="input-field" dir="ltr">
+                            </div>
+                            <div class="space-y-1 md:col-span-2">
+                                <label class="text-xs font-bold text-gray-400">رابط الحقوق (عند الضغط على النص)</label>
+                                <input id="copy_link" placeholder="https://..." class="input-field" dir="ltr">
+                                <p class="text-[10px] text-gray-400">اتركه فارغاً إذا كنت لا تريد رابطاً.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="saveMain()" class="w-full bg-[#423064] text-white py-4 rounded-xl font-bold hover:shadow-lg transition mt-8">حفظ كل الإعدادات ✅</button>
+                </div>
+            </div>
+
+            <!-- تبويب: الإضافات (Addons) -->
+            <div id="tab-addons" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">مجموعات الإضافات 🧩</h2>
+                
+                <!-- نموذج إنشاء مجموعة -->
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 mb-8">
+                    <h3 class="font-bold text-purple-800 mb-4">إنشاء مجموعة جديدة</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <input id="addon_group_ar" placeholder="اسم المجموعة (عربي) - مثال: المشروبات" class="input-field">
+                        <input id="addon_group_en" placeholder="Group Name (En)" class="input-field" dir="ltr">
+                        <select id="addon_type" class="input-field font-bold">
+                            <option value="one">خيار واحد (Radio) - مثل: حراق/عادي</option>
+                            <option value="many">خيارات متعددة (Checkbox) - مثل: جبن، صوص</option>
+                            <option value="qty">كميات (Counter) - مثل: ماء، مشروب</option>
+                        </select>
+                    </div>
+
+                    <!-- إضافة الخيارات داخل المجموعة -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4">
+                        <h4 class="text-xs font-bold text-gray-400 mb-2">الخيارات داخل هذه المجموعة</h4>
+                        <div class="flex flex-wrap gap-2 mb-2">
+                            <input id="opt_name_ar" placeholder="الخيار (عربي)" class="input-field w-1/3">
+                            <input id="opt_name_en" placeholder="Option (En)" class="input-field w-1/3" dir="ltr">
+                            <input id="opt_price" type="number" placeholder="السعر" class="input-field w-1/6">
+                            <button onclick="addTempOption()" class="bg-blue-600 text-white px-4 rounded-lg font-bold w-1/6 hover:bg-blue-700">+</button>
+                        </div>
+                        <div id="temp-options-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+
+                    <button onclick="saveAddonGroup()" class="w-full bg-[#423064] text-white py-3 rounded-xl font-bold hover:shadow-lg transition">حفظ المجموعة</button>
+                </div>
+
+                <!-- قائمة المجموعات المحفوظة -->
+                <div id="addons-list" class="space-y-4"></div>
+            </div>
+
+            <!-- تبويب: السوشيال ميديا -->
+            <div id="tab-social" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">روابط التواصل الاجتماعي 📱</h2>
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+                    <div class="flex flex-col md:flex-row gap-6 mb-8 bg-purple-50 p-6 rounded-2xl border border-purple-100">
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="show_social_top" class="w-6 h-6 accent-purple-600 cursor-pointer">
+                            <label for="show_social_top" class="font-bold cursor-pointer select-none">إظهار الشريط أسفل الهيرو (العلوي)</label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <input type="checkbox" id="show_social_bottom" class="w-6 h-6 accent-purple-600 cursor-pointer">
+                            <label for="show_social_bottom" class="font-bold cursor-pointer select-none">إظهار الشريط فوق الفوتر (السفلي)</label>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <select id="social_platform" class="input-field md:w-1/4 font-bold">
+                            <option value="instagram">Instagram</option>
+                            <option value="snapchat">Snapchat</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="twitter">X (Twitter)</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="whatsapp">WhatsApp</option>
+                        </select>
+                        <input id="social_link" placeholder="رابط الحساب (URL)" class="input-field md:w-2/4 text-left" dir="ltr">
+                        <button onclick="addSocialLink()" class="bg-[#423064] text-white px-6 rounded-xl font-bold hover:bg-purple-800 transition md:w-1/4">إضافة أيقونة ➕</button>
+                    </div>
+                    <div id="social-list-admin" class="space-y-3"></div>
+                    <button onclick="saveSocialSettings()" class="w-full mt-8 bg-green-600 text-white py-4 rounded-xl font-bold hover:shadow-lg transition">حفظ إعدادات السوشيال ✅</button>
+                </div>
+            </div>
+
+            <!-- تبويب: الأقسام -->
+            <div id="tab-sections" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">إدارة الأقسام</h2>
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100">
+                    <div class="flex flex-col md:flex-row gap-4 mb-6 bg-blue-50 p-4 rounded-xl">
+                        <input id="nav_title_ar" placeholder="اسم القسم (عربي)" class="input-field">
+                        <input id="nav_title_en" placeholder="Section Name (EN)" class="input-field" dir="ltr">
+                        <input id="nav_link" placeholder="الرابط (#example)" class="input-field font-mono" dir="ltr">
+                        <button id="nav-add-btn" onclick="addOrUpdateNav()" class="bg-blue-600 text-white px-8 rounded-xl font-bold whitespace-nowrap">إضافة</button>
+                        <button id="nav-cancel-btn" onclick="resetNavForm()" class="bg-gray-400 text-white px-4 rounded-xl font-bold hidden">إلغاء</button>
+                    </div>
+                    <div id="nav-list" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <!-- تبويب: الوجبات -->
+            <div id="tab-meals" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">إدارة الوجبات</h2>
+                <div class="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 relative">
+                    <h3 class="font-bold text-purple-800 mb-4">إضافة / تعديل وجبة</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="lg:col-span-3">
+                             <label class="text-xs font-bold text-gray-400">القسم</label>
+                             <select id="offer_section" class="input-field font-bold text-purple-700"></select>
+                        </div>
+                        <input id="name_ar" placeholder="اسم الوجبة (عربي)" class="input-field">
+                        <input id="name_en" placeholder="Meal Name (EN)" class="input-field" dir="ltr">
+                        <input id="op" type="number" placeholder="السعر" class="input-field">
+                        <div class="lg:col-span-2 relative group">
+                            <input id="oi" type="text" placeholder="رابط الصورة (Image URL)" class="input-field" oninput="updateImagePreview(this.value)">
+                            <div class="absolute top-2 left-2 hidden group-hover:block z-10">
+                                <img id="img-preview" src="" class="w-16 h-16 rounded-lg object-cover shadow border bg-white">
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 p-2 rounded-xl border">
+                             <span class="text-sm font-bold">خصم؟</span>
+                             <input type="checkbox" id="discount_toggle" class="w-5 h-5" onchange="toggleDiscountField()">
+                             <input id="od" type="number" placeholder="%" class="input-field hidden w-20">
+                        </div>
+                        <textarea id="desc_ar" placeholder="الوصف (عربي)" class="input-field lg:col-span-1" rows="2"></textarea>
+                        <textarea id="desc_en" placeholder="Description (EN)" class="input-field lg:col-span-2" rows="2" dir="ltr"></textarea>
+                        
+                        <!-- ربط الإضافات بالوجبة -->
+                        <div class="lg:col-span-3 bg-blue-50 p-4 rounded-xl border border-blue-100 mt-2">
+                            <label class="text-xs font-bold text-gray-500 mb-2 block">ربط مجموعات الإضافات بهذه الوجبة:</label>
+                            <div id="meal-addons-selection" class="grid grid-cols-2 md:grid-cols-4 gap-2 max-h-32 overflow-y-auto">
+                                <!-- سيتم ملؤه بالجافاسكربت -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3 mt-6">
+                        <button id="add-btn" onclick="addOrUpdateOffer()" class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition shadow-lg">حفظ الوجبة ✅</button>
+                        <button id="cancel-btn" onclick="resetForm()" class="hidden px-6 bg-gray-400 text-white rounded-xl font-bold">إلغاء</button>
+                    </div>
+                </div>
+                <div id="list" class="space-y-3 pb-20"></div>
+            </div>
+
+            <!-- تبويب: النسخ الاحتياطي -->
+            <div id="tab-backup" class="tab-content hidden space-y-6">
+                <h2 class="text-2xl font-black mb-4">النسخ الاحتياطي والاستعادة 💾</h2>
+                <div class="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 text-center">
+                    <p class="text-gray-500 mb-8 max-w-lg mx-auto">
+                        لأن الموقع يعمل بدون قاعدة بيانات سحابية، يتم حفظ البيانات في متصفحك.
+                        <br><strong class="text-red-500">مهم جداً:</strong> قم بتحميل ملف النسخة الاحتياطية كل فترة لحفظ بياناتك.
+                    </p>
+                    <div class="flex flex-col md:flex-row justify-center gap-6">
+                        <button onclick="downloadBackup()" class="flex items-center justify-center gap-3 bg-purple-600 text-white px-8 py-4 rounded-2xl font-bold hover:bg-purple-700 shadow-lg transition transform hover:-translate-y-1">
+                            <span>تحميل نسخة احتياطية (JSON) ⬇️</span>
+                        </button>
+                        <div class="relative overflow-hidden">
+                            <button class="flex items-center justify-center gap-3 bg-gray-800 text-white px-8 py-4 rounded-2xl font-bold hover:bg-gray-900 shadow-lg transition w-full">
+                                <span>استعادة نسخة سابقة ⬆️</span>
+                            </button>
+                            <input type="file" id="backup-file" onchange="restoreBackup(this)" class="absolute inset-0 opacity-0 cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // المتغيرات العامة
+        let editIndex = -1;
+        let editNavIndex = -1;
+        let tempOptions = [];
+        
+        // --- 1. المصادقة ---
+        function go() {
+            const savedPass = localStorage.getItem('adminPass') || '123456';
+            if(document.getElementById('p').value === savedPass) {
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('panel').classList.remove('hidden');
+                loadData();
+                updateStats();
+            } else { alert('كلمة المرور خطأ'); }
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('new_pass').value;
+            if(newPass.length < 4) return alert("كلمة المرور ضعيفة");
+            localStorage.setItem('adminPass', newPass);
+            alert("تم تغيير كلمة المرور بنجاح!");
+            document.getElementById('new_pass').value = '';
+        }
+
+        // --- 2. إدارة التبويبات ---
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active', 'bg-[#423064]', 'text-white'));
+            
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const btn = document.getElementById(`btn-${tabName}`);
+            if(btn) {
+                btn.classList.add('active');
+                if(!btn.classList.contains('text-blue-600')) {
+                    btn.classList.add('bg-[#423064]', 'text-white');
+                }
+            }
+        }
+
+        // --- 3. وظائف التحميل والحفظ ---
+        function loadData() {
+            const getVal = (k) => localStorage.getItem(k) || '';
+            
+            document.getElementById('t_ar').value = getVal('siteTitleAr');
+            document.getElementById('t_en').value = getVal('siteTitleEn');
+            document.getElementById('w').value = getVal('whatsappNum');
+            document.getElementById('l').value = getVal('siteLogo');
+            document.getElementById('h').value = getVal('heroImage');
+            
+            document.getElementById('hero_t_ar').value = getVal('heroTitleAr');
+            document.getElementById('hero_t_en').value = getVal('heroTitleEn');
+            document.getElementById('hero_d_ar').value = getVal('heroDescAr');
+            document.getElementById('hero_d_en').value = getVal('heroDescEn');
+
+            document.getElementById('footer_title_ar').value = getVal('footerTitleAr');
+            document.getElementById('footer_title_en').value = getVal('footerTitleEn');
+            document.getElementById('footer_desc_ar').value = getVal('footerDescAr');
+            document.getElementById('footer_desc_en').value = getVal('footerDescEn');
+            document.getElementById('map_url').value = getVal('mapUrl');
+
+            document.getElementById('copy_ar').value = getVal('siteCopyAr');
+            document.getElementById('copy_en').value = getVal('siteCopyEn');
+            document.getElementById('copy_link').value = getVal('siteCopyLink');
+
+            document.getElementById('show_app_hero').checked = (localStorage.getItem('showAppHero') === 'true');
+            document.getElementById('show_app_footer').checked = (localStorage.getItem('showAppFooter') === 'true');
+            document.getElementById('app_txt_ar').value = getVal('appTextAr');
+            document.getElementById('app_txt_en').value = getVal('appTextEn');
+            document.getElementById('app_link').value = getVal('appLink');
+
+            renderContacts();
+            renderNavLinks();
+            renderList();
+            renderSocialAdmin();
+            renderAddonGroupsList();
+            renderMealAddonsSelection();
+        }
+
+        function saveMain() {
+            const setVal = (k, id) => localStorage.setItem(k, document.getElementById(id).value);
+            
+            setVal('siteTitleAr', 't_ar'); setVal('siteTitleEn', 't_en');
+            setVal('whatsappNum', 'w'); setVal('siteLogo', 'l'); setVal('heroImage', 'h');
+            setVal('heroTitleAr', 'hero_t_ar'); setVal('heroTitleEn', 'hero_t_en');
+            setVal('heroDescAr', 'hero_d_ar'); setVal('heroDescEn', 'hero_d_en');
+            setVal('footerTitleAr', 'footer_title_ar'); setVal('footerTitleEn', 'footer_title_en');
+            setVal('footerDescAr', 'footer_desc_ar'); setVal('footerDescEn', 'footer_desc_en');
+            setVal('mapUrl', 'map_url');
+            
+            setVal('siteCopyAr', 'copy_ar'); setVal('siteCopyEn', 'copy_en'); setVal('siteCopyLink', 'copy_link');
+
+            localStorage.setItem('showAppHero', document.getElementById('show_app_hero').checked);
+            localStorage.setItem('showAppFooter', document.getElementById('show_app_footer').checked);
+            setVal('appTextAr', 'app_txt_ar'); setVal('appTextEn', 'app_txt_en'); setVal('appLink', 'app_link');
+
+            alert('تم حفظ الإعدادات بنجاح! ✅');
+        }
+
+        // --- إدارة جهات الاتصال ---
+        function renderContacts() {
+            const contacts = JSON.parse(localStorage.getItem('siteContacts')) || [];
+            document.getElementById('contact-list').innerHTML = contacts.map((c, i) => `
+                <div class="flex justify-between items-center bg-white p-2 rounded-lg border text-sm">
+                    <span class="font-bold">${c.type === 'phone' ? '📱' : '📧'} <span dir="ltr">${c.value}</span></span>
+                    <button onclick="removeContact(${i})" class="text-red-500 hover:bg-red-50 px-2 rounded">x</button>
+                </div>
+            `).join('');
+        }
+        function addContact() {
+            const type = document.getElementById('contact_type').value;
+            const value = document.getElementById('contact_val').value;
+            if(!value) return;
+            let contacts = JSON.parse(localStorage.getItem('siteContacts')) || [];
+            contacts.push({ type, value });
+            localStorage.setItem('siteContacts', JSON.stringify(contacts));
+            document.getElementById('contact_val').value = '';
+            renderContacts();
+        }
+        function removeContact(i) {
+            let contacts = JSON.parse(localStorage.getItem('siteContacts'));
+            contacts.splice(i, 1);
+            localStorage.setItem('siteContacts', JSON.stringify(contacts));
+            renderContacts();
+        }
+
+        // --- إدارة السوشيال ميديا ---
+        function renderSocialAdmin() {
+            const data = JSON.parse(localStorage.getItem('siteSocialSettings')) || { showTop: true, showBottom: true, links: [] };
+            document.getElementById('show_social_top').checked = data.showTop;
+            document.getElementById('show_social_bottom').checked = data.showBottom;
+            const list = document.getElementById('social-list-admin');
+            list.innerHTML = data.links.map((link, i) => `
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl border">
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold capitalize bg-white px-3 py-1 rounded-lg shadow-sm">${link.platform}</span>
+                        <a href="${link.url}" target="_blank" class="text-xs text-blue-500 hover:underline truncate max-w-[200px] dir-ltr">${link.url}</a>
+                    </div>
+                    <button onclick="deleteSocialLink(${i})" class="text-red-500 hover:bg-red-50 p-2 rounded-lg font-bold">🗑️ حذف</button>
+                </div>
+            `).join('');
+            if(data.links.length === 0) list.innerHTML = `<div class="text-center text-gray-400 text-sm py-4">لم تضف أي روابط بعد...</div>`;
+        }
+
+        function addSocialLink() {
+            const platform = document.getElementById('social_platform').value;
+            const url = document.getElementById('social_link').value;
+            if(!url) return alert("الرابط مطلوب!");
+            let data = JSON.parse(localStorage.getItem('siteSocialSettings')) || { showTop: true, showBottom: true, links: [] };
+            data.links.push({ platform, url });
+            localStorage.setItem('siteSocialSettings', JSON.stringify(data));
+            document.getElementById('social_link').value = '';
+            renderSocialAdmin();
+        }
+
+        function deleteSocialLink(index) {
+            let data = JSON.parse(localStorage.getItem('siteSocialSettings'));
+            data.links.splice(index, 1);
+            localStorage.setItem('siteSocialSettings', JSON.stringify(data));
+            renderSocialAdmin();
+        }
+
+        function saveSocialSettings() {
+            let data = JSON.parse(localStorage.getItem('siteSocialSettings')) || { links: [] };
+            data.showTop = document.getElementById('show_social_top').checked;
+            data.showBottom = document.getElementById('show_social_bottom').checked;
+            localStorage.setItem('siteSocialSettings', JSON.stringify(data));
+            alert("تم حفظ إعدادات السوشيال ميديا! ✅");
+        }
+
+        // --- إدارة الإضافات (Add-ons) ---
+        function addTempOption() {
+            const ar = document.getElementById('opt_name_ar').value;
+            const en = document.getElementById('opt_name_en').value;
+            const price = document.getElementById('opt_price').value || 0;
+            
+            if(!ar) return alert("اسم الخيار مطلوب");
+            
+            tempOptions.push({ nameAr: ar, nameEn: en, price: parseFloat(price) });
+            renderTempOptions();
+            
+            document.getElementById('opt_name_ar').value = '';
+            document.getElementById('opt_name_en').value = '';
+            document.getElementById('opt_price').value = '';
+        }
+
+        function renderTempOptions() {
+            document.getElementById('temp-options-list').innerHTML = tempOptions.map((o, i) => `
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2">
+                    ${o.nameAr} (${o.price > 0 ? o.price + ' ر.س' : 'مجاني'})
+                    <button onclick="tempOptions.splice(${i},1); renderTempOptions()" class="text-red-500 hover:text-red-700">x</button>
+                </span>
+            `).join('');
+        }
+
+        function saveAddonGroup() {
+            const titleAr = document.getElementById('addon_group_ar').value;
+            const titleEn = document.getElementById('addon_group_en').value;
+            const type = document.getElementById('addon_type').value;
+            
+            if(!titleAr || tempOptions.length === 0) return alert("الاسم والخيارات مطلوبة");
+
+            let groups = JSON.parse(localStorage.getItem('siteAddonGroups')) || [];
+            groups.push({
+                id: Date.now(),
+                titleAr, titleEn, type,
+                options: tempOptions
+            });
+            
+            localStorage.setItem('siteAddonGroups', JSON.stringify(groups));
+            
+            document.getElementById('addon_group_ar').value = '';
+            document.getElementById('addon_group_en').value = '';
+            tempOptions = [];
+            renderTempOptions();
+            renderAddonGroupsList();
+            renderMealAddonsSelection();
+            alert("تم حفظ المجموعة!");
+        }
+
+        function renderAddonGroupsList() {
+            const groups = JSON.parse(localStorage.getItem('siteAddonGroups')) || [];
+            document.getElementById('addons-list').innerHTML = groups.map((g, i) => `
+                <div class="bg-gray-50 p-4 rounded-xl border flex justify-between items-center">
+                    <div>
+                        <div class="font-bold text-gray-800">${g.titleAr} <span class="text-xs text-gray-400">(${g.type})</span></div>
+                        <div class="text-xs text-gray-500 mt-1">${g.options.length} خيارات</div>
+                    </div>
+                    <button onclick="deleteAddonGroup(${i})" class="text-red-500 hover:bg-red-100 p-2 rounded-lg font-bold">🗑️ حذف</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteAddonGroup(i) {
+            if(confirm('حذف المجموعة؟')) {
+                let groups = JSON.parse(localStorage.getItem('siteAddonGroups'));
+                groups.splice(i, 1);
+                localStorage.setItem('siteAddonGroups', JSON.stringify(groups));
+                renderAddonGroupsList();
+                renderMealAddonsSelection();
+            }
+        }
+
+        function renderMealAddonsSelection() {
+            const groups = JSON.parse(localStorage.getItem('siteAddonGroups')) || [];
+            const container = document.getElementById('meal-addons-selection');
+            if(groups.length === 0) {
+                container.innerHTML = '<div class="text-xs text-gray-400 col-span-4">لا توجد مجموعات إضافات. قم بإنشائها أولاً.</div>';
+                return;
+            }
+            container.innerHTML = groups.map(g => `
+                <label class="flex items-center gap-2 bg-white p-2 rounded border cursor-pointer hover:bg-gray-50">
+                    <input type="checkbox" value="${g.id}" class="addon-checkbox w-4 h-4 accent-purple-600">
+                    <span class="text-xs font-bold select-none">${g.titleAr}</span>
+                </label>
+            `).join('');
+        }
+
+        // --- إدارة الأقسام ---
+        function renderNavLinks() {
+            const navs = JSON.parse(localStorage.getItem('siteNavs')) || [];
+            const container = document.getElementById('nav-list');
+            const select = document.getElementById('offer_section');
+            container.innerHTML = navs.map((n, i) => `
+                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-lg border ${n.isHidden ? 'opacity-50' : ''}">
+                    <div><div class="font-bold text-gray-800">${n.titleAr}</div><div class="text-xs text-gray-400 font-mono">${n.link}</div></div>
+                    <div class="flex gap-1">
+                        <button onclick="moveNav(${i}, -1)" class="p-1 hover:bg-gray-200 rounded">⬆️</button>
+                        <button onclick="moveNav(${i}, 1)" class="p-1 hover:bg-gray-200 rounded">⬇️</button>
+                        <button onclick="toggleNavVisibility(${i})" class="p-1 hover:bg-blue-100 rounded text-blue-600">${n.isHidden ? '👁️' : '🚫'}</button>
+                        <button onclick="editNav(${i})" class="p-1 hover:bg-yellow-100 rounded text-yellow-600">✏️</button>
+                        <button onclick="deleteNav(${i})" class="p-1 hover:bg-red-100 rounded text-red-600">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+            const activeSections = navs.filter(n => n.link.startsWith('#') && !n.isHidden);
+            select.innerHTML = activeSections.map(s => `<option value="${s.link}">${s.titleAr}</option>`).join('');
+            updateStats();
+        }
+
+        function addOrUpdateNav() {
+            const titleAr = document.getElementById('nav_title_ar').value;
+            const link = document.getElementById('nav_link').value;
+            if(!titleAr || !link) return alert("الاسم والرابط مطلوبان");
+            let navs = JSON.parse(localStorage.getItem('siteNavs')) || [];
+            if(editNavIndex === -1) navs.push({ titleAr, titleEn: document.getElementById('nav_title_en').value, link, isHidden: false });
+            else { navs[editNavIndex].titleAr = titleAr; navs[editNavIndex].titleEn = document.getElementById('nav_title_en').value; navs[editNavIndex].link = link; resetNavForm(); }
+            localStorage.setItem('siteNavs', JSON.stringify(navs));
+            renderNavLinks();
+        }
+
+        function editNav(i) {
+            let navs = JSON.parse(localStorage.getItem('siteNavs'));
+            document.getElementById('nav_title_ar').value = navs[i].titleAr;
+            document.getElementById('nav_title_en').value = navs[i].titleEn;
+            document.getElementById('nav_link').value = navs[i].link;
+            editNavIndex = i;
+            document.getElementById('nav-add-btn').innerText = "تحديث";
+            document.getElementById('nav-cancel-btn').classList.remove('hidden');
+        }
+
+        function resetNavForm() {
+            editNavIndex = -1;
+            document.getElementById('nav_title_ar').value = ''; document.getElementById('nav_title_en').value = ''; document.getElementById('nav_link').value = '';
+            document.getElementById('nav-add-btn').innerText = "إضافة";
+            document.getElementById('nav-cancel-btn').classList.add('hidden');
+        }
+
+        function moveNav(i, dir) {
+            let navs = JSON.parse(localStorage.getItem('siteNavs'));
+            if ((dir === -1 && i > 0) || (dir === 1 && i < navs.length - 1)) {
+                [navs[i], navs[i + dir]] = [navs[i + dir], navs[i]];
+                localStorage.setItem('siteNavs', JSON.stringify(navs));
+                renderNavLinks();
+            }
+        }
+        function toggleNavVisibility(i) {
+            let navs = JSON.parse(localStorage.getItem('siteNavs'));
+            navs[i].isHidden = !navs[i].isHidden;
+            localStorage.setItem('siteNavs', JSON.stringify(navs));
+            renderNavLinks();
+        }
+        function deleteNav(i) {
+            if(confirm('حذف القسم؟')) { let navs = JSON.parse(localStorage.getItem('siteNavs')); navs.splice(i, 1); localStorage.setItem('siteNavs', JSON.stringify(navs)); renderNavLinks(); }
+        }
+
+        // --- إدارة الوجبات ---
+        function renderList() {
+            let offs = JSON.parse(localStorage.getItem('siteOffers')) || [];
+            document.getElementById('list').innerHTML = offs.map((o, i) => `
+                <div class="p-4 bg-white rounded-2xl flex flex-col sm:flex-row justify-between items-center border shadow-sm hover:shadow-md transition gap-4">
+                    <div class="flex items-center gap-4 w-full sm:w-auto">
+                        <img src="${o.img}" class="w-16 h-16 rounded-xl object-cover bg-gray-100" onerror="this.src='https://placehold.co/100'">
+                        <div>
+                            <span class="text-[10px] bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-bold">${o.section}</span>
+                            <div class="font-bold text-gray-800 text-lg">${o.nameAr}</div>
+                            <div class="text-xs text-gray-400 font-mono">${o.price} ر.س</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                        <button onclick="editOffer(${i})" class="px-4 py-2 bg-blue-50 text-blue-600 rounded-xl font-bold hover:bg-blue-100">تعديل</button>
+                        <button onclick="deleteOffer(${i})" class="px-4 py-2 bg-red-50 text-red-600 rounded-xl font-bold hover:bg-red-100">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+            updateStats();
+        }
+
+        function updateImagePreview(url) {
+            const img = document.getElementById('img-preview');
+            if(url) { img.src = url; img.parentElement.classList.remove('hidden'); } else { img.parentElement.classList.add('hidden'); }
+        }
+
+        function toggleDiscountField() {
+            const checked = document.getElementById('discount_toggle').checked;
+            const input = document.getElementById('od');
+            checked ? input.classList.remove('hidden') : input.classList.add('hidden');
+            if(!checked) input.value = '';
+        }
+
+        function addOrUpdateOffer() {
+            const section = document.getElementById('offer_section').value;
+            const nameAr = document.getElementById('name_ar').value;
+            const price = document.getElementById('op').value;
+            
+            const selectedAddons = Array.from(document.querySelectorAll('.addon-checkbox:checked')).map(cb => parseInt(cb.value));
+
+            if(!section || !nameAr || !price) return alert("يرجى تعبئة البيانات الأساسية");
+
+            let offers = JSON.parse(localStorage.getItem('siteOffers')) || [];
+            const data = {
+                section, nameAr, nameEn: document.getElementById('name_en').value,
+                descAr: document.getElementById('desc_ar').value, descEn: document.getElementById('desc_en').value,
+                price, discount: document.getElementById('discount_toggle').checked ? document.getElementById('od').value : "",
+                img: document.getElementById('oi').value,
+                linkedAddons: selectedAddons
+            };
+
+            if(editIndex === -1) offers.push(data); else offers[editIndex] = data;
+            localStorage.setItem('siteOffers', JSON.stringify(offers));
+            renderList(); resetForm(); alert('تم الحفظ!');
+        }
+
+        function editOffer(i) {
+            let offs = JSON.parse(localStorage.getItem('siteOffers'));
+            let o = offs[i];
+            const sel = document.getElementById('offer_section');
+            if(![...sel.options].some(opt => opt.value === o.section)) { let opt = document.createElement('option'); opt.value = o.section; opt.text = o.section + " (مخفي)"; sel.add(opt); }
+            sel.value = o.section;
+            document.getElementById('name_ar').value = o.nameAr; document.getElementById('name_en').value = o.nameEn;
+            document.getElementById('op').value = o.price; document.getElementById('oi').value = o.img;
+            updateImagePreview(o.img);
+            document.getElementById('desc_ar').value = o.descAr; document.getElementById('desc_en').value = o.descEn;
+            if(o.discount) { document.getElementById('discount_toggle').checked = true; document.getElementById('od').value = o.discount; document.getElementById('od').classList.remove('hidden'); } else { document.getElementById('discount_toggle').checked = false; document.getElementById('od').classList.add('hidden'); }
+            
+            const checkboxes = document.querySelectorAll('.addon-checkbox');
+            checkboxes.forEach(cb => cb.checked = false);
+            if(o.linkedAddons) {
+                o.linkedAddons.forEach(id => {
+                    const cb = document.querySelector(`.addon-checkbox[value="${id}"]`);
+                    if(cb) cb.checked = true;
+                });
+            }
+
+            editIndex = i; document.getElementById('add-btn').innerText = "حفظ التعديلات"; document.getElementById('cancel-btn').classList.remove('hidden');
+            document.querySelector('.tab-content:not(.hidden)').scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function deleteOffer(i) {
+            if(confirm('حذف؟')) { let offs = JSON.parse(localStorage.getItem('siteOffers')); offs.splice(i, 1); localStorage.setItem('siteOffers', JSON.stringify(offs)); renderList(); }
+        }
+
+        function resetForm() {
+            editIndex = -1; document.querySelectorAll('#tab-meals input, #tab-meals textarea').forEach(i => i.value = '');
+            document.querySelectorAll('.addon-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('discount_toggle').checked = false; document.getElementById('od').classList.add('hidden');
+            document.getElementById('img-preview').parentElement.classList.add('hidden');
+            document.getElementById('add-btn').innerText = "حفظ الوجبة ✅"; document.getElementById('cancel-btn').classList.add('hidden');
+        }
+
+        // --- النسخ الاحتياطي ---
+        function downloadBackup() {
+            const data = {
+                siteTitleAr: localStorage.getItem('siteTitleAr'),
+                siteTitleEn: localStorage.getItem('siteTitleEn'),
+                whatsappNum: localStorage.getItem('whatsappNum'),
+                siteLogo: localStorage.getItem('siteLogo'),
+                heroImage: localStorage.getItem('heroImage'),
+                heroTitleAr: localStorage.getItem('heroTitleAr'),
+                heroTitleEn: localStorage.getItem('heroTitleEn'),
+                heroDescAr: localStorage.getItem('heroDescAr'),
+                heroDescEn: localStorage.getItem('heroDescEn'),
+                footerTitleAr: localStorage.getItem('footerTitleAr'),
+                footerTitleEn: localStorage.getItem('footerTitleEn'),
+                footerDescAr: localStorage.getItem('footerDescAr'),
+                footerDescEn: localStorage.getItem('footerDescEn'),
+                mapUrl: localStorage.getItem('mapUrl'),
+                siteCopyAr: localStorage.getItem('siteCopyAr'),
+                siteCopyEn: localStorage.getItem('siteCopyEn'),
+                siteCopyLink: localStorage.getItem('siteCopyLink'),
+                showAppHero: localStorage.getItem('showAppHero'),
+                showAppFooter: localStorage.getItem('showAppFooter'),
+                appTextAr: localStorage.getItem('appTextAr'),
+                appTextEn: localStorage.getItem('appTextEn'),
+                appLink: localStorage.getItem('appLink'),
+                siteNavs: JSON.parse(localStorage.getItem('siteNavs') || '[]'),
+                siteOffers: JSON.parse(localStorage.getItem('siteOffers') || '[]'),
+                siteContacts: JSON.parse(localStorage.getItem('siteContacts') || '[]'),
+                siteSocialSettings: JSON.parse(localStorage.getItem('siteSocialSettings') || '{}'),
+                siteAddonGroups: JSON.parse(localStorage.getItem('siteAddonGroups') || '[]')
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "menu_backup_" + new Date().toISOString().slice(0,10) + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function restoreBackup(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    const saveIfFound = (key, val) => {
+                        if (val !== undefined && val !== null) {
+                            if (typeof val === 'object') localStorage.setItem(key, JSON.stringify(val));
+                            else localStorage.setItem(key, val);
+                        }
+                    };
+                    saveIfFound('siteTitleAr', data.siteTitleAr); saveIfFound('siteTitleEn', data.siteTitleEn);
+                    saveIfFound('whatsappNum', data.whatsappNum); saveIfFound('siteLogo', data.siteLogo); saveIfFound('heroImage', data.heroImage);
+                    saveIfFound('heroTitleAr', data.heroTitleAr); saveIfFound('heroTitleEn', data.heroTitleEn);
+                    saveIfFound('heroDescAr', data.heroDescAr); saveIfFound('heroDescEn', data.heroDescEn);
+                    saveIfFound('footerTitleAr', data.footerTitleAr); saveIfFound('footerTitleEn', data.footerTitleEn);
+                    saveIfFound('footerDescAr', data.footerDescAr); saveIfFound('footerDescEn', data.footerDescEn);
+                    saveIfFound('mapUrl', data.mapUrl);
+                    saveIfFound('siteCopyAr', data.siteCopyAr); saveIfFound('siteCopyEn', data.siteCopyEn); saveIfFound('siteCopyLink', data.siteCopyLink);
+                    saveIfFound('showAppHero', data.showAppHero); saveIfFound('showAppFooter', data.showAppFooter);
+                    saveIfFound('appTextAr', data.appTextAr); saveIfFound('appTextEn', data.appTextEn); saveIfFound('appLink', data.appLink);
+                    saveIfFound('siteNavs', data.siteNavs); saveIfFound('siteOffers', data.siteOffers);
+                    saveIfFound('siteContacts', data.siteContacts); saveIfFound('siteSocialSettings', data.siteSocialSettings);
+                    saveIfFound('siteAddonGroups', data.siteAddonGroups);
+                    
+                    alert("تم استعادة النسخة الاحتياطية بنجاح! سيتم تحديث الصفحة.");
+                    location.reload();
+                } catch(err) { console.error(err); alert("ملف غير صالح!"); }
+            };
+            reader.readAsText(file);
+        }
+
+        function updateStats() {
+            const meals = JSON.parse(localStorage.getItem('siteOffers')) || [];
+            const navs = JSON.parse(localStorage.getItem('siteNavs')) || [];
+            document.getElementById('stat-meals').innerText = meals.length;
+            document.getElementById('stat-sections').innerText = navs.length;
+        }
+
+        window.onload = () => { /* go(); */ };
+    </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>سلة المشتريات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') document.documentElement.classList.add('dark');
+    </script>
+</head>
+<body class="bg-gray-50 text-gray-900 dark:bg-zinc-950 dark:text-white font-['Cairo'] transition-colors duration-300 min-h-screen flex flex-col">
+
+    <div class="w-full max-w-3xl mx-auto p-4 md:p-8 flex-grow pb-32">
+        
+        <!-- الهيدر -->
+        <div class="flex justify-between items-center mb-6 bg-white dark:bg-zinc-900 p-5 rounded-3xl shadow-sm border dark:border-zinc-800">
+            <h1 id="cart-title" class="text-xl md:text-2xl font-black text-[#423064] dark:text-purple-400">سلة الطلبات 🛒</h1>
+            <a href="index.html" class="text-gray-500 dark:text-gray-400 font-bold hover:text-purple-600 transition flex items-center gap-2 text-sm md:text-base">
+                <span>المنيو</span>
+                <span class="bg-gray-100 dark:bg-zinc-800 px-2 py-1 rounded-lg">↩️</span>
+            </a>
+        </div>
+
+        <!-- منطقة العناصر -->
+        <div id="cart-items" class="space-y-4 mb-8"></div>
+
+        <!-- منطقة الدفع -->
+        <div id="checkout-area" class="bg-white dark:bg-zinc-900 p-6 md:p-8 rounded-[2rem] shadow-xl border dark:border-zinc-800">
+            <div class="flex justify-between items-center mb-6 text-xl md:text-2xl font-black border-b dark:border-zinc-800 pb-4">
+                <span>الإجمالي:</span>
+                <span class="text-purple-600 dark:text-purple-400"><span id="grand-total">0</span> ر.س</span>
+            </div>
+
+            <!-- تم حذف حقل رقم الهاتف من هنا -->
+
+            <div class="mb-6">
+                <label for="order-notes" class="block text-sm font-bold mb-3 text-gray-700 dark:text-gray-300">
+                    ملاحظات إضافية / العنوان المختصر:
+                </label>
+                <textarea id="order-notes" class="w-full p-4 rounded-2xl bg-gray-50 dark:bg-zinc-800 border border-gray-200 dark:border-zinc-700 focus:ring-2 focus:ring-purple-600 outline-none transition resize-none text-sm" rows="2" placeholder="مثال: الدور الأول، شقة 4..."></textarea>
+            </div>
+            
+            <button id="checkout-btn" onclick="checkoutWhatsApp()" class="w-full py-4 md:py-5 bg-green-600 text-white rounded-2xl font-black text-lg shadow-lg hover:bg-green-700 transition flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed group active:scale-95">
+                <span>إتمام الطلب عبر واتساب</span>
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.017-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- استدعاء data.js -->
+    <script src="data.js"></script>
+
+    <script>
+        function getData(key) {
+            if (typeof siteData !== 'undefined' && siteData && siteData[key] !== undefined) {
+                return siteData[key];
+            }
+            return localStorage.getItem(key);
+        }
+
+        const siteName = getData('siteTitleAr') || 'SamaBrand';
+        const sitePhone = getData('whatsappNum') || '967733022793';
+        
+        document.getElementById('cart-title').innerText = `سلة ${siteName}`;
+
+        function renderCart() {
+            const container = document.getElementById('cart-items');
+            const checkoutArea = document.getElementById('checkout-area');
+            const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+            let grandTotal = 0;
+            
+            if(cart.length === 0) {
+                checkoutArea.style.display = 'none';
+                container.innerHTML = `
+                    <div class="flex flex-col items-center justify-center py-16 px-4 text-center bg-white dark:bg-zinc-900 rounded-[2rem] border dark:border-zinc-800 shadow-sm">
+                        <div class="text-6xl mb-6 opacity-80">🍽️</div>
+                        <h3 class="text-xl font-black text-gray-800 dark:text-white mb-2">السلة فارغة حالياً</h3>
+                        <p class="text-gray-500 text-sm mb-8 max-w-xs mx-auto">لم تقم بإضافة أي وجبات لذيذة إلى سلتك بعد!</p>
+                        <a href="index.html" class="px-8 py-3 bg-[#423064] text-white rounded-full font-bold shadow-lg hover:bg-purple-700 transition hover:-translate-y-1 flex items-center gap-2">
+                            <span>تصفح قائمة الطعام</span>
+                            <span>←</span>
+                        </a>
+                    </div>
+                `;
+                document.getElementById('grand-total').innerText = "0";
+                return;
+            }
+
+            checkoutArea.style.display = 'block';
+            container.innerHTML = '';
+            
+            cart.forEach((item, index) => {
+                const price = parseFloat(item.price);
+                const qty = parseInt(item.qty);
+                const itemTotal = price * qty;
+                grandTotal += itemTotal;
+                
+                const notesHtml = item.notes 
+                    ? `<div class="text-xs text-gray-500 mt-1 bg-gray-50 dark:bg-zinc-800 p-1.5 rounded-lg border border-gray-100 dark:border-zinc-700 inline-block">${item.notes}</div>` 
+                    : '';
+
+                container.innerHTML += `
+                    <div class="bg-white dark:bg-zinc-900 p-4 rounded-3xl shadow-sm border dark:border-zinc-800 flex items-center gap-4 relative overflow-hidden group">
+                        <div class="flex-1">
+                            <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-purple-600 transition text-sm md:text-base">
+                                ${item.name}
+                            </h3>
+                            ${notesHtml}
+                            <p class="text-gray-400 text-xs mt-1 font-mono">${price.toFixed(2)} ر.س × ${qty}</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-gray-50 dark:bg-zinc-800 p-1 rounded-xl border dark:border-zinc-700">
+                            <button onclick="updateQty(${index}, -1)" class="w-7 h-7 flex items-center justify-center bg-white dark:bg-zinc-700 dark:text-white rounded-lg shadow-sm font-bold text-gray-600">-</button>
+                            <span class="font-bold w-4 text-center text-sm dark:text-white">${qty}</span>
+                            <button onclick="updateQty(${index}, 1)" class="w-7 h-7 flex items-center justify-center bg-white dark:bg-zinc-700 dark:text-white rounded-lg shadow-sm font-bold text-green-600">+</button>
+                        </div>
+                        <div class="text-left w-16">
+                            <div class="font-black text-purple-600 dark:text-purple-400 text-sm font-mono">${itemTotal.toFixed(2)}</div>
+                            <button onclick="removeItem(${index})" class="text-red-400 text-[10px] hover:text-red-600 underline decoration-red-200 mt-1">حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('grand-total').innerText = grandTotal.toFixed(2);
+        }
+
+        function updateQty(index, change) {
+            let cart = JSON.parse(localStorage.getItem('myCart'));
+            cart[index].qty += change;
+            if(cart[index].qty < 1) cart[index].qty = 1;
+            localStorage.setItem('myCart', JSON.stringify(cart));
+            renderCart();
+        }
+
+        function removeItem(index) {
+            if(confirm('حذف هذا العنصر؟')) {
+                let cart = JSON.parse(localStorage.getItem('myCart'));
+                cart.splice(index, 1);
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                renderCart();
+            }
+        }
+
+        function checkoutWhatsApp() {
+            const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+            if(cart.length === 0) return;
+
+            const userNotes = document.getElementById('order-notes').value.trim();
+            let total = 0;
+            const now = new Date().toLocaleDateString('ar-EG');
+
+            // --- بناء الفاتورة (تصميم الجدول) ---
+            let message = `🧾 *فاتورة طلب جديد* 🆕%0a`;
+            message += `📅 *التاريخ:* ${now}%0a`;
+            message += `➖➖➖➖➖➖➖➖➖➖%0a`;
+            message += `*العدد*  |  *الصنف*             | *السعر*%0a`;
+            message += `➖➖➖➖➖➖➖➖➖➖%0a`;
+            
+            cart.forEach((item) => {
+                const price = parseFloat(item.price);
+                const qty = parseInt(item.qty);
+                const sub = price * qty;
+                total += sub;
+                
+                // الصف الأول: العدد والاسم والسعر
+                message += `${qty}x     | ${item.name} | ${sub.toFixed(0)}%0a`;
+                
+                // الصف الثاني: الإضافات (إن وجدت)
+                if(item.notes) {
+                    message += `       | 🔸 _(${item.notes})_%0a`;
+                }
+                
+                message += `--------------------------%0a`;
+            });
+
+            message += `➖➖➖➖➖➖➖➖➖➖%0a`;
+            message += `💰 *الإجمالي النهائي: ${total.toFixed(2)} ر.س*%0a`;
+            message += `➖➖➖➖➖➖➖➖➖➖%0a`;
+
+            if (userNotes) {
+                message += `📝 *ملاحظات / العنوان:*%0a${userNotes}%0a`;
+                message += `➖➖➖➖➖➖➖➖➖➖%0a`;
+            }
+
+            // التعامل مع الموقع
+            if (navigator.geolocation) {
+                const btn = document.getElementById('checkout-btn');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '📍 جاري تحديد الموقع...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const link = `https://maps.google.com/?q=${position.coords.latitude},${position.coords.longitude}`;
+                        message += `📍 *موقع الاستلام:*%0a${link}`;
+                        window.open(`https://wa.me/${sitePhone}?text=${message}`, '_blank');
+                        btn.innerHTML = originalHtml;
+                    },
+                    (err) => {
+                        message += `📍 *موقع الاستلام:* (لم يحدد)`;
+                        window.open(`https://wa.me/${sitePhone}?text=${message}`, '_blank');
+                        btn.innerHTML = originalHtml;
+                    },
+                    { enableHighAccuracy: true, timeout: 10000 }
+                );
+            } else {
+                message += `📍 *موقع الاستلام:* (لم يحدد)`;
+                window.open(`https://wa.me/${sitePhone}?text=${message}`, '_blank');
+            }
+        }
+
+        window.onload = renderCart;
+    </script>
+</body>
+</html>
